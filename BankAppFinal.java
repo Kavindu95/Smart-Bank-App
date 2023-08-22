@@ -57,4 +57,71 @@ public class BankAppFinal{
             }
         } while (true);
     }
+
+private static String addAccount(String[][] customers) {
+
+        int id = customers.length + 1;
+        String AcId = String.format("SDB-%05d", id);
+        String name;
+        Double deposit;
+        boolean valid;
+
+        do {
+            String screen = ADD_ACCOUNT;
+            valid = true;
+            System.out.println();
+            System.out.print("\tEnter A/C Name: ");
+            name = SCANNER.nextLine().strip();
+            if (name.isBlank()) {
+                System.out.printf(ERROR_MSG, "A/C name can't be empty");
+                valid = false;
+                continue;
+            }
+            for (int i = 0; i < name.length(); i++) {
+                if (!(Character.isLetter(name.charAt(i)) ||
+                        Character.isSpaceChar(name.charAt(i)))) {
+                    System.out.printf(ERROR_MSG, "Invalid A/C name");
+                    valid = false;
+                    break;
+                }
+            }
+        } while (!valid);
+
+        do {
+            valid = true;
+            System.out.println();
+            System.out.print("Enter your Deposited Amount Here: ");
+            deposit = SCANNER.nextDouble();
+            SCANNER.nextLine();
+
+            if (deposit > 5000) {
+                System.out.println("Initial Deposit: " + deposit);
+                System.out.println();
+            } else {
+                System.out.printf(ERROR_MSG, "Not Sufficient Amount In Your A/C");
+                valid = false;
+            }
+        } while (!valid);
+
+        String[][] newCustomers = new String[customers.length + 1][3];
+        for (int i = 0; i < customers.length; i++) {
+            newCustomers[i] = customers[i];
+        }
+        newCustomers[newCustomers.length - 1][0] = AcId;
+        newCustomers[newCustomers.length - 1][1] = name;
+        newCustomers[newCustomers.length - 1][2] = deposit + "";
+
+        customers = newCustomers;
+
+        System.out.printf(SUCCESS_MSG, String.format("%s:%s has been saved successfully", customers.length, name));
+        System.out.print("\tDo you want to continue adding (Y/n)? ");
+        if (SCANNER.nextLine().strip().equalsIgnoreCase("Y")) {
+            System.out.println(CLEAR);
+            return addAccount(customers);
+        } else {
+            System.out.println(CLEAR);
+            return DASHBOARD;
+        }
+    }
 }
+
