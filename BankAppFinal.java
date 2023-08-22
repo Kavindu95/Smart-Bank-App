@@ -123,5 +123,46 @@ private static String addAccount(String[][] customers) {
             return DASHBOARD;
         }
     }
+    private static String depositMoney(String[][] customers) {
+        boolean valid;
+        do{
+        valid = true;
+        String screen = DEPOSIT;
+        System.out.print("\tEnter Account ID: ");
+        String depositAccountId = SCANNER.nextLine();
+        //System.out.println(depositAccountId);
+
+        int depositIndex = findCustomerIndex(customers, depositAccountId);
+
+        if (depositIndex != -1) {
+            System.out.print("\tEnter Deposit Amount: ");
+            double depositAmount = SCANNER.nextDouble();
+            SCANNER.nextLine();
+
+            double currentBalance = Double.parseDouble(customers[depositIndex][2]);
+            currentBalance += depositAmount;
+            customers[depositIndex][2] = String.valueOf(currentBalance);
+
+            System.out.printf(SUCCESS_MSG, "Deposit successful. New balance: " + currentBalance);
+        } else {
+            System.out.printf(ERROR_MSG, "Account not found.");
+        }
+    }while(!valid);
+
+        System.out.print("\tPress Enter to continue...");
+        SCANNER.nextLine();
+        System.out.println(CLEAR);
+        String screen = DEPOSIT;
+        return depositMoney(customers);
+    }
+
+    private static int findCustomerIndex(String[][] customers, String accountId) {
+        for (int i = 0; i < customers.length; i++) {
+            if (customers[i][0].equals(accountId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }
 
