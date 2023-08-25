@@ -82,3 +82,18 @@ public class BankAppFinal {
             }
         }
     }
+    private static void displayScreen(String screenTitle) {
+        final String APP_TITLE = String.format("%s%s%s", COLOR_BLUE_BOLD, screenTitle, RESET);
+        System.out.println(CLEAR);
+        System.out.println("\t" + APP_TITLE + "\n");
+    }
+
+    private static int getUserChoice(int min, int max) {
+        int option;
+        do {
+            System.out.print("\tEnter an option to continue: ");
+            option = SCANNER.nextInt();
+            SCANNER.nextLine();
+        } while (option < min || option > max);
+        return option;
+    }
