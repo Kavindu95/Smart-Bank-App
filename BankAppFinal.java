@@ -184,3 +184,37 @@ private static String createNewAccount() {
             }
         } while (!valid);
     }
+ private static void withdrawal(String accountNumber) {
+        int amount;
+        boolean valid;
+
+        do {
+            valid = true;
+            System.out.print("\tEnter the amount to withdraw: ");
+            amount = SCANNER.nextInt();
+            SCANNER.nextLine();
+
+            if (amount > 0) {
+               
+                for (String[] account : accounts) {
+                    if (account[0].equals(accountNumber)) {
+                        int currentBalance = Integer.parseInt(account[2]);
+                        if (currentBalance >= amount) {
+                            int newBalance = currentBalance - amount;
+                            account[2] = String.valueOf(newBalance);
+                            System.out.printf(SUCCESS_MSG, String.format("%d has been withdrawn from %s. New balance: %d", amount, account[1], newBalance));
+                            return;
+                        } else {
+                            System.out.printf(ERROR_MSG, "Insufficient balance");
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+                System.out.printf(ERROR_MSG, "Account not found");
+            } else {
+                System.out.printf(ERROR_MSG, "Invalid amount");
+                valid = false;
+            }
+        } while (!valid);
+    }
