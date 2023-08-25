@@ -2,207 +2,83 @@ import java.util.Scanner;
 
 public class BankAppFinal {
     private static final Scanner SCANNER = new Scanner(System.in);
+
     private static final String CLEAR = "\033[H\033[2J";
     private static final String COLOR_BLUE_BOLD = "\033[34;1m";
     private static final String COLOR_RED_BOLD = "\033[31;1m";
     private static final String COLOR_GREEN_BOLD = "\033[33;1m";
     private static final String RESET = "\033[0m";
+
+    private static final String DASHBOARD = "👷 Welcome To Smart Banking System";
+    private static final String CREATE_NEW_ACCOUNT = "Create New Account";
+    private static final String DEPOSIT = "Deposit";
+    private static final String WITHDRAWALS = "Withdrawals";
+    private static final String TRANSFER = "Transfer";
+    private static final String CHECK_ACCOUNT_BALANCE = "Check Account Balance";
+    private static final String DELETE_ACCOUNT = "Delete Account";
+    private static final String EXIT = "Exit";
+
     private static final String ERROR_MSG = String.format("\t%s%s%s\n", COLOR_RED_BOLD, "%s", RESET);
     private static final String SUCCESS_MSG = String.format("\t%s%s%s\n", COLOR_GREEN_BOLD, "%s", RESET);
-    private static final String DASHBOARD = "👷 Welcome To Smart Banking System";
-    private static final String ADD_ACCOUNT = "➕ Add New Account";
-    private static final String DEPOSIT = "➕ Deposit";
-    private static final String WITHDRAW = "➕ Withdraw";
 
-    private static String[][] customers = new String[0][];
+    private static String[][] accounts = new String[0][3];
+    private static int accountIdCounter = 1;
 
     public static void main(String[] args) {
-
         String screen = DASHBOARD;
-        System.out.println(CLEAR);
+        System.out.println(CLEAR); 
 
-        do {
-            final String APP_TITLE = String.format("%s%s%s",
-                    COLOR_BLUE_BOLD, screen, RESET);
+        while (true) {
+            
+           
+            System.out.println("\t[1]. Open New Account");
+            System.out.println("\t[2]. Deposit Money");
+            System.out.println("\t[3]. Withdraw Money");
+            System.out.println("\t[4]. Transfer Money");
+            System.out.println("\t[5]. Check Account Balance");
+            System.out.println("\t[6]. Drop Existing Account");
+            System.out.println("\t[7]. Exit");
 
-            System.out.println(CLEAR);
-            System.out.println("\t" + APP_TITLE + "\n");
+            int option = getUserChoice(1, 7);
 
-            switch (screen) {
-                case DASHBOARD:
-
-                    System.out.println("\t[1]. Open New Account");
-                    System.out.println("\t[2]. Deposit Money");
-                    System.out.println("\t[3]. Withdraw Money");
-                    System.out.println("\t[4]. Transfer Money");
-                    System.out.println("\t[5]. Check Account Balance");
-                    System.out.println("\t[6]. Drop Existing Account");
-                    System.out.println("\t[7]. Exit");
-                    System.out.print("\tEnter an option to continue: ");
-
-                    int option = SCANNER.nextInt();
+            switch (option) {
+                case 1:
                     System.out.println(CLEAR);
-                    SCANNER.nextLine();
-
-                    switch (option) {
-                        case 1:
-                            screen = addAccount(customers);
-                            break;
-                        case 2:
-                            screen = depositMoney(customers);
-                            break;
-                        case 3:
-                            screen = withdrawMoney(customers);
-                            break;
-                    }
-
-            }
-        } while (true);
-    }
-
-    private static String addAccount(String[][] customers) {
-
-        int id = customers.length + 1;
-        String AcId = String.format("SDB-%05d", id);
-        String name;
-        Double deposit;
-        boolean valid;
-        System.out.println(ADD_ACCOUNT);
-
-        do {
-
-            valid = true;
-            System.out.println();
-            System.out.print("\tEnter A/C Name: ");
-            name = SCANNER.nextLine().strip();
-            if (name.isBlank()) {
-                System.out.printf(ERROR_MSG, "A/C name can't be empty");
-                valid = false;
-                continue;
-            }
-            for (int i = 0; i < name.length(); i++) {
-                if (!(Character.isLetter(name.charAt(i)) ||
-                        Character.isSpaceChar(name.charAt(i)))) {
-                    System.out.printf(ERROR_MSG, "Invalid A/C name");
-                    valid = false;
+                    screen = createNewAccount();
+                    System.out.println(CLEAR);
                     break;
-                }
-            }
-        } while (!valid);
-
-        do {
-            valid = true;
-            System.out.println();
-            System.out.print("Enter your Deposited Amount Here: ");
-            deposit = SCANNER.nextDouble();
-            SCANNER.nextLine();
-
-            if (deposit > 5000) {
-                System.out.println("Initial Deposit: " + deposit);
-                System.out.println();
-            } else {
-                System.out.printf(ERROR_MSG, "Not Sufficient Amount In Your A/C");
-                valid = false;
-            }
-        } while (!valid);
-
-        String[][] newCustomers = new String[customers.length + 1][3];
-        for (int i = 0; i < customers.length; i++) {
-            newCustomers[i] = customers[i];
-        }
-        newCustomers[newCustomers.length - 1][0] = AcId;
-        newCustomers[newCustomers.length - 1][1] = name;
-        newCustomers[newCustomers.length - 1][2] = deposit + "";
-
-        customers = newCustomers;
-
-        System.out.printf(SUCCESS_MSG, String.format("%s:%s has been saved successfully", customers.length, name));
-        System.out.print("\tDo you want to continue adding (Y/n)? ");
-        if (SCANNER.nextLine().strip().equalsIgnoreCase("Y")) {
-            System.out.println(CLEAR);
-            return addAccount(customers);
-        } else {
-            System.out.println(CLEAR);
-            return DASHBOARD;
-        }
-    }
-
-    private static String depositMoney(String[][] customers) {
-        boolean valid;
-        System.out.println(DEPOSIT);
-        do {
-            valid = true;
-
-            System.out.print("\tEnter Account ID: ");
-            String depositAccountId = SCANNER.nextLine();
-            // System.out.println(depositAccountId);
-
-            int depositIndex = findCustomerIndex(customers, depositAccountId);
-
-            if (depositIndex != -1) {
-                System.out.print("\tEnter Deposit Amount: ");
-                double depositAmount = SCANNER.nextDouble();
-                SCANNER.nextLine();
-
-                double currentBalance = Double.parseDouble(customers[depositIndex][2]);
-                currentBalance += depositAmount;
-                customers[depositIndex][2] = String.valueOf(currentBalance);
-
-                System.out.printf(SUCCESS_MSG, "Deposit successful. New balance: " + currentBalance);
-            } else {
-                System.out.printf(ERROR_MSG, "Account not found.");
-            }
-        } while (!valid);
-
-        System.out.print("\tPress Enter to continue...");
-        SCANNER.nextLine();
-        System.out.println(CLEAR);
-        String screen = DEPOSIT;
-        return depositMoney(customers);
-    }
-
-    private static int findCustomerIndex(String[][] customers, String accountId) {
-        for (int i = 0; i < customers.length; i++) {
-            if (customers[i][0].equals(accountId)) {
-                return i;
+                case 2:
+                    System.out.print("\tEnter your account number: ");
+                    String depositAccountNumber = SCANNER.nextLine().strip();
+                    deposit(depositAccountNumber);
+                    break;
+                case 3:
+                    System.out.print("\tEnter your account number: ");
+                    String withdrawalAccountNumber = SCANNER.nextLine().strip();
+                    withdrawal(withdrawalAccountNumber);
+                    break;
+                case 4:
+                    System.out.print("\tEnter your account number: ");
+                    String transferSourceAccountNumber = SCANNER.nextLine().strip();
+                    transfer(transferSourceAccountNumber);
+                    break;
+                case 5:
+                    System.out.print("\tEnter your account number: ");
+                    String checkBalanceAccountNumber = SCANNER.nextLine().strip();
+                    checkAccountBalance(checkBalanceAccountNumber);
+                    break;
+                case 6:
+                    System.out.print("\tEnter your account number to delete: ");
+                    String deleteAccountNumber = SCANNER.nextLine().strip();
+                    screen = deleteAccount(deleteAccountNumber);
+                    break;
+                case 7:
+                    System.out.println(CLEAR);
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+                    break;
             }
         }
-        return -1;
     }
-
-    private static String withdrawMoney(String[][] customers) {
-        System.out.println(WITHDRAW);
-        boolean valid;
-
-        do {
-            valid = true;
-
-            System.out.print("\tEnter Account ID: ");
-            String withdrawAccountId = SCANNER.nextLine();
-
-            int withdrawIndex = findCustomerIndex(customers, withdrawAccountId);
-
-            if (withdrawIndex != -1) {
-                System.out.print("\tEnter Withdraw Amount: ");
-                double withdrawAmount = SCANNER.nextDouble();
-                SCANNER.nextLine();
-
-                double currentBalance = Double.parseDouble(customers[withdrawIndex][2]);
-
-                if (withdrawAmount <= currentBalance) {
-                    currentBalance -= withdrawAmount;
-                    customers[withdrawIndex][2] = String.valueOf(currentBalance);
-                    System.out.printf(SUCCESS_MSG, "Withdrawal successful. New balance: " + currentBalance);
-                } else {
-                    System.out.printf(ERROR_MSG, "Insufficient balance.");
-                }
-            } else {
-                System.out.printf(ERROR_MSG, "Account not found.");
-            }
-        } while (!valid);
-
-        System.out.print("\tPress Enter to continue...");
-        SCANNER.nextLine();
-        return withdrawMoney(customers);
-    }
-}
