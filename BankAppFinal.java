@@ -156,3 +156,31 @@ private static String createNewAccount() {
             return DASHBOARD; 
         }
     }
+ private static void deposit(String accountNumber) {
+        int amount;
+        boolean valid;
+
+        do {
+            valid = true;
+            System.out.print("\tEnter the amount to deposit: ");
+            amount = SCANNER.nextInt();
+            SCANNER.nextLine();
+
+            if (amount > 0) {
+               
+                for (String[] account : accounts) {
+                    if (account[0].equals(accountNumber)) {
+                        int currentBalance = Integer.parseInt(account[2]);
+                        int newBalance = currentBalance + amount;
+                        account[2] = String.valueOf(newBalance);
+                        System.out.printf(SUCCESS_MSG, String.format("%d has been deposited to %s. New balance: %d", amount, account[1], newBalance));
+                        return;
+                    }
+                }
+                System.out.printf(ERROR_MSG, "Account not found");
+            } else {
+                System.out.printf(ERROR_MSG, "Invalid amount");
+                valid = false;
+            }
+        } while (!valid);
+    }
