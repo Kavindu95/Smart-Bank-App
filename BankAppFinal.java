@@ -97,3 +97,62 @@ public class BankAppFinal {
         } while (option < min || option > max);
         return option;
     }
+private static String createNewAccount() {
+        String newAccountId = String.format("SDB-%05d", accountIdCounter);
+        String newName;
+        boolean valid;
+
+        do {
+            valid = true;
+            System.out.print("\tEnter A/C Name: ");
+            newName = SCANNER.nextLine().strip();
+            if (newName.isBlank()) {
+                System.out.printf(ERROR_MSG, "A/C name can't be empty");
+                valid = false;
+                continue;
+            }
+            for (int i = 0; i < newName.length(); i++) {
+                if (!(Character.isLetter(newName.charAt(i)) || Character.isSpaceChar(newName.charAt(i)))) {
+                    System.out.printf(ERROR_MSG, "Invalid A/C name");
+                    valid = false;
+                    break;
+                }
+            }
+        } while (!valid);
+
+        int initialDeposit;
+
+        do {
+            valid = true;
+            System.out.print("Enter your Deposited Amount Here: ");
+            initialDeposit = SCANNER.nextInt();
+            SCANNER.nextLine();
+
+            if (initialDeposit >= 5000) { 
+                System.out.println("Initial Deposit: " + initialDeposit);
+                System.out.println();
+            } else {
+                System.out.printf(ERROR_MSG, "Not Sufficient Amount In Your A/C");
+                valid = false;
+                continue;
+            }
+        } while (!valid);
+
+        String[] newAccount = {newAccountId, newName, String.valueOf(initialDeposit)};
+        String[][] newAccounts = new String[accounts.length + 1][3];
+        for (int i = 0; i < accounts.length; i++) {
+            newAccounts[i] = accounts[i];
+        }
+        newAccounts[newAccounts.length - 1] = newAccount;
+        accounts = newAccounts;
+
+        accountIdCounter++;
+
+        System.out.printf(SUCCESS_MSG, String.format("%s:%s has been saved successfully", newAccountId, newName));
+        System.out.print("\tDo you want to continue adding (Y/n)? ");
+        if (SCANNER.nextLine().strip().equalsIgnoreCase("Y")) {
+            return CREATE_NEW_ACCOUNT;
+        } else {
+            return DASHBOARD; 
+        }
+    }
