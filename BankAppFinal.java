@@ -218,3 +218,59 @@ private static String createNewAccount() {
             }
         } while (!valid);
     }
+ private static void transfer(String sourceAccountNumber) {
+        String targetAccountNumber;
+        int amount;
+        boolean valid;
+
+        do {
+            valid = true;
+            System.out.print("\tEnter the target account number: ");
+            targetAccountNumber = SCANNER.nextLine().strip();
+
+            if (targetAccountNumber.isEmpty() || !accountExists(targetAccountNumber)) {
+                System.out.printf(ERROR_MSG, "Invalid target account");
+                valid = false;
+                continue;
+            }
+
+            System.out.print("\tEnter the amount to transfer: ");
+            amount = SCANNER.nextInt();
+            SCANNER.nextLine();
+
+            if (amount <= 0) {
+                System.out.printf(ERROR_MSG, "Invalid amount");
+                valid = false;
+                continue;
+            }
+
+           
+            String[] sourceAccount = null;
+            String[] targetAccount = null;
+            for (String[] account : accounts) {
+                if (account[0].equals(sourceAccountNumber)) {
+                    sourceAccount = account;
+                }
+                if (account[0].equals(targetAccountNumber)) {
+                    targetAccount = account;
+                }
+            }
+
+            if (sourceAccount != null && targetAccount != null) {
+                int sourceBalance = Integer.parseInt(sourceAccount[2]);
+                if (sourceBalance >= amount) {
+                    int targetBalance = Integer.parseInt(targetAccount[2]);
+                    sourceAccount[2] = String.valueOf(sourceBalance - amount);
+                    targetAccount[2] = String.valueOf(targetBalance + amount);
+                    System.out.printf(SUCCESS_MSG, String.format("%d has been transferred from %s to %s", amount, sourceAccount[1], targetAccount[1]));
+                    return;
+                } else {
+                    System.out.printf(ERROR_MSG, "Insufficient balance in the source account");
+                    valid = false;
+                }
+            } else {
+                System.out.printf(ERROR_MSG, "Source or target account not found");
+                valid = false;
+            }
+        } while (!valid);
+    }
