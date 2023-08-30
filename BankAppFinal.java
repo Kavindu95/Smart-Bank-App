@@ -284,4 +284,31 @@ private static String createNewAccount() {
         }
         System.out.printf(ERROR_MSG, "Account not found");
     }
-    
+    private static String deleteAccount(String accountNumber) {
+        int indexToDelete = -1;
+
+        for (int i = 0; i < accounts.length; i++) {
+            if (accounts[i][0].equals(accountNumber)) {
+                indexToDelete = i;
+                break;
+            }
+        }
+
+        if (indexToDelete != -1) {
+            String deletedAccountName = accounts[indexToDelete][1];
+           
+            String[][] newAccounts = new String[accounts.length - 1][3];
+            int newIndex = 0;
+            for (int i = 0; i < accounts.length; i++) {
+                if (i != indexToDelete) {
+                    newAccounts[newIndex++] = accounts[i];
+                }
+            }
+            accounts = newAccounts;
+            System.out.printf(SUCCESS_MSG, String.format("%s has been deleted successfully", deletedAccountName));
+        } else {
+            System.out.printf(ERROR_MSG, "Account not found");
+        }
+
+        return DASHBOARD; 
+    }
