@@ -312,3 +312,12 @@ private static String createNewAccount() {
 
         return DASHBOARD; 
     }
+    private static boolean accountExists(String accountNumber) {
+        for (String[] account : accounts) {
+            if (account[0].equals(accountNumber)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
