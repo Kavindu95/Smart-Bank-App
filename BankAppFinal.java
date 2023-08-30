@@ -274,3 +274,14 @@ private static String createNewAccount() {
             }
         } while (!valid);
     }
+    private static void checkAccountBalance(String accountNumber) {
+        for (String[] account : accounts) {
+            if (account[0].equals(accountNumber)) {
+                int balance = Integer.parseInt(account[2]);
+                System.out.printf(SUCCESS_MSG, String.format("Account balance for %s: %d", account[1], balance));
+                return;
+            }
+        }
+        System.out.printf(ERROR_MSG, "Account not found");
+    }
+    
